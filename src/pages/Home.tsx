@@ -15,11 +15,14 @@ import {
   Info,
   Check,
   AlertCircle,
+  AlertTriangle,
+  LightbulbIcon,
 } from 'lucide-react';
 import { useContractStore } from '@/store/contractStore';
 import { CONTRACT_CATEGORIES } from '@/types';
 import AnalysisProgress from '@/components/AnalysisProgress';
 import DisclaimerModal from '@/components/DisclaimerModal';
+import { validateContractText, type ValidationResult } from '@/utils/textValidator';
 
 export default function Home() {
   const navigate = useNavigate();
@@ -29,6 +32,7 @@ export default function Home() {
   const [isDragging, setIsDragging] = useState(false);
   const [showDisclaimer, setShowDisclaimer] = useState(false);
   const [showEmptyError, setShowEmptyError] = useState(false);
+  const [validationResult, setValidationResult] = useState<ValidationResult | null>(null);
   const { isAnalyzing, startAnalysis, setContractText: setStoreContractText, setContractType: setStoreContractType } = useContractStore();
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
@@ -53,11 +57,13 @@ export default function Home() {
           const text = event.target?.result as string;
           setContractText(text);
           setShowEmptyError(false);
+          setValidationResult(null);
         };
         reader.readAsText(file);
       } else {
         setContractText('（已上传文件：' + file.name + '）\n\n' + sampleContractText);
         setShowEmptyError(false);
+        setValidationResult(null);
       }
     }
   }, []);
@@ -68,14 +74,20 @@ export default function Home() {
       const file = files[0];
       setContractText('（已上传文件：' + file.name + '）\n\n' + sampleContractText);
       setShowEmptyError(false);
+      setValidationResult(null);
     }
   };
 
   const handleStartReview = () => {
-    if (!contractText.trim()) {
-      setShowEmptyError(true);
+    const result = validateContractText(contractText);
+    
+    if (!result.isValid) {
+      setValidationResult(result);
+      setShowEmptyError(result.errorType === 'too_short' && !contractText.trim());
       return;
     }
+    
+    setValidationResult(null);
     setShowEmptyError(false);
     setStoreContractText(contractText);
     setStoreContractType(contractType);
@@ -89,6 +101,7 @@ export default function Home() {
   const handleTrySample = () => {
     setContractText(sampleContractText);
     setShowEmptyError(false);
+    setValidationResult(null);
   };
 
   const features = [
@@ -279,8 +292,9 @@ export default function Home() {
                           value={contractText}
                           onChange={(e) => {
                             setContractText(e.target.value);
-                            if (showEmptyError && e.target.value.trim()) {
+                            if ((showEmptyError || validationResult) && e.target.value.trim()) {
                               setShowEmptyError(false);
+                              setValidationResult(null);
                             }
                           }}
                           placeholder="请在此粘贴合同文本内容..."
@@ -325,7 +339,7 @@ export default function Home() {
                           </label>
                           <button
                             onClick={handleStartReview}
-                            disabled={!contractText.trim()}
+                            disabled={false}
                             className={`w-full py-3.5 rounded-md font-medium transition-all duration-200 flex items-center justify-center gap-2 ${
                               contractText.trim()
                                 ? 'btn-primary hover:shadow-card'
@@ -335,7 +349,46 @@ export default function Home() {
                             <Sparkles className="w-5 h-5" />
                             开始智能审查
                           </button>
-                          {showEmptyError && (
+                          
+                          {validationResult && !validationResult.isValid && (
+                            <div className="mt-3 bg-risk-highLight/30 border border-risk-high/20 rounded-lg p-4 animate-fade-in">
+                              <div className="flex items-start gap-2.5">
+                                <AlertTriangle className="w-5 h-5 text-risk-high flex-shrink-0 mt-0.5" />
+                                <div className="flex-1">
+                                  <p className="text-sm font-medium text-risk-high mb-2">
+                                    {validationResult.message}
+                                  </p>
+                                  {validationResult.suggestions && validationResult.suggestions.length > 0 && (
+                                    <div>
+                                      <p className="text-xs text-ink-500 mb-1.5 flex items-center gap-1">
+                                        <LightbulbIcon className="w-3.5 h-3.5 text-accent-500" />
+                                        建议：
+                                      </p>
+                                      <ul className="space-y-1">
+                                        {validationResult.suggestions.map((suggestion, idx) => (
+                                          <li key={idx} className="text-xs text-ink-600 flex items-start gap-1.5">
+                                            <span className="text-primary-500 mt-1">•</span>
+                                            {suggestion}
+                                          </li>
+                                        ))}
+                                      </ul>
+                                    </div>
+                                  )}
+                                  {validationResult.errorType !== 'too_short' && (
+                                    <button
+                                      onClick={handleTrySample}
+                                      className="mt-3 text-xs text-primary-600 hover:text-primary-700 font-medium flex items-center gap-1"
+                                    >
+                                      <Copy className="w-3.5 h-3.5" />
+                                      点击使用示例合同快速体验
+                                    </button>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                          
+                          {showEmptyError && !validationResult && (
                             <p className="mt-2 text-sm text-risk-high flex items-center gap-1.5 animate-fade-in">
                               <AlertCircle className="w-4 h-4" />
                               请先上传合同文件或粘贴合同文本
