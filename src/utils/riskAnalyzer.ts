@@ -1,4 +1,5 @@
 import type { ContractClause, RiskItem, SuggestionItem, TemplateDeviation, RiskType, RiskSeverity, SuggestionType } from '@/types';
+import { findRegulationReferences } from '@/data/regulations';
 
 interface ParsedClause {
   number: string;
@@ -418,6 +419,8 @@ export function analyzeRisks(clauseContent: string): RiskItem[] {
         if (addedRisks.has(riskKey)) continue;
         addedRisks.add(riskKey);
         
+        const regulationReferences = findRegulationReferences(clauseContent, pattern.type);
+        
         risks.push({
           id: `risk-${Date.now()}-${riskIdCounter++}`,
           type: pattern.type,
@@ -425,6 +428,7 @@ export function analyzeRisks(clauseContent: string): RiskItem[] {
           title: pattern.title,
           description: pattern.description(keyword),
           relatedText: pattern.relatedText(clauseContent, keyword),
+          regulationReferences: regulationReferences.length > 0 ? regulationReferences : undefined,
         });
         break;
       }
@@ -447,6 +451,7 @@ function adjustSeverityByCategory(risks: RiskItem[], content: string) {
   
   if (content.includes('保密') && risks.length === 0) {
     if (content.length < 80) {
+      const regulationReferences = findRegulationReferences(content, 'missing');
       risks.push({
         id: `risk-missing-${Date.now()}`,
         type: 'missing',
@@ -454,6 +459,7 @@ function adjustSeverityByCategory(risks: RiskItem[], content: string) {
         title: '保密条款内容简略',
         description: '保密条款内容较为简略，建议明确保密信息范围、除外情形、保密期限和违约责任等。',
         relatedText: content.substring(0, Math.min(50, content.length)),
+        regulationReferences: regulationReferences.length > 0 ? regulationReferences : undefined,
       });
     }
   }
@@ -739,22 +745,26 @@ export function addMissingClauseWarnings(clauses: ContractClause[], parsedClause
   const missingCheck = checkMissingEssentialClauses(parsedClauses);
   const result = [...clauses];
   
-  const missingMap: { [key: string]: { title: string; content: string } } = {
+  const missingMap: { [key: string]: { title: string; content: string; keywords: string[] } } = {
     'liability': { 
       title: '违约责任条款缺失', 
-      content: '检测建议：合同应包含明确的违约责任条款，约定各类违约情形的处理方式和违约金标准。' 
+      content: '检测建议：合同应包含明确的违约责任条款，约定各类违约情形的处理方式和违约金标准。',
+      keywords: ['违约责任', '违约金', '赔偿损失'],
     },
     'dispute': { 
       title: '争议解决条款缺失', 
-      content: '检测建议：合同应约定争议解决方式（诉讼或仲裁）和管辖机构。' 
+      content: '检测建议：合同应约定争议解决方式（诉讼或仲裁）和管辖机构。',
+      keywords: ['管辖', '法院', '诉讼', '仲裁', '争议解决'],
     },
     'confidentiality': { 
       title: '保密条款缺失', 
-      content: '检测建议：建议增加保密条款，保护双方商业秘密和敏感信息。' 
+      content: '检测建议：建议增加保密条款，保护双方商业秘密和敏感信息。',
+      keywords: ['保密', '商业秘密', '保密信息'],
     },
     'term': { 
       title: '合同期限与终止条款不完善', 
-      content: '检测建议：建议明确合同期限、解除条件和终止后的善后事宜。' 
+      content: '检测建议：建议明确合同期限、解除条件和终止后的善后事宜。',
+      keywords: ['合同有效期', '合同期内', '自动终止', '自动解除'],
     },
   };
   
@@ -763,6 +773,9 @@ export function addMissingClauseWarnings(clauses: ContractClause[], parsedClause
   for (const [category, isFound] of Object.entries(missingCheck)) {
     if (!isFound && missingMap[category]) {
       const info = missingMap[category];
+      const sampleContent = info.keywords.join(' ');
+      const regulationReferences = findRegulationReferences(sampleContent, 'missing');
+      
       result.push({
         id: `clause-warning-${warningIndex}`,
         number: '【缺失提醒】',
@@ -776,6 +789,7 @@ export function addMissingClauseWarnings(clauses: ContractClause[], parsedClause
           title: info.title,
           description: info.content,
           relatedText: '',
+          regulationReferences: regulationReferences.length > 0 ? regulationReferences : undefined,
         }],
         suggestions: [{
           id: `sug-missing-${warningIndex}`,

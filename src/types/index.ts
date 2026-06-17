@@ -2,6 +2,31 @@ export type RiskType = 'inequality' | 'ambiguity' | 'missing' | 'compliance';
 export type RiskSeverity = 'high' | 'medium' | 'low';
 export type SuggestionType = 'modification' | 'addition' | 'deletion';
 export type ContractCategory = 'sales' | 'service' | 'employment' | 'ndA' | 'lease' | 'other';
+export type RegulationType = 'law' | 'regulation' | 'judicial_interpretation' | 'administrative_regulation';
+export type RelevanceType = 'directly_applicable' | 'related' | 'reference';
+
+export interface RegulationItem {
+  id: string;
+  name: string;
+  type: RegulationType;
+  issueAuthority: string;
+  issueDate: string;
+  effectiveDate: string;
+  isRepealed: boolean;
+  repealDate?: string;
+  replaceBy?: string;
+  scope: string;
+  articleIndex: {
+    [key: string]: string;
+  };
+}
+
+export interface RegulationReference {
+  regulationId: string;
+  articleNumber: string;
+  articleContent: string;
+  relevance: RelevanceType;
+}
 
 export interface RiskItem {
   id: string;
@@ -10,6 +35,7 @@ export interface RiskItem {
   title: string;
   description: string;
   relatedText: string;
+  regulationReferences?: RegulationReference[];
 }
 
 export interface SuggestionItem {

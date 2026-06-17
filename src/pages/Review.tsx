@@ -21,6 +21,7 @@ import RiskBadge from '@/components/RiskBadge';
 import RiskTypeBadge from '@/components/RiskTypeBadge';
 import AnalysisProgress from '@/components/AnalysisProgress';
 import DisclaimerModal from '@/components/DisclaimerModal';
+import RegulationReference from '@/components/RegulationReference';
 import { useState } from 'react';
 
 export default function Review() {
@@ -454,6 +455,9 @@ export default function Review() {
                                   "{risk.relatedText}"
                                 </p>
                               </div>
+                            )}
+                            {risk.regulationReferences && risk.regulationReferences.length > 0 && (
+                              <RegulationReference references={risk.regulationReferences} />
                             )}
                           </div>
                         </div>

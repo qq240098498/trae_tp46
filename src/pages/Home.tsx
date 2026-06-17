@@ -17,6 +17,7 @@ import {
   AlertCircle,
   AlertTriangle,
   LightbulbIcon,
+  BookOpen,
 } from 'lucide-react';
 import { useContractStore } from '@/store/contractStore';
 import { CONTRACT_CATEGORIES } from '@/types';
@@ -153,6 +154,14 @@ export default function Home() {
       bgColor: 'bg-primary-50',
       borderColor: 'border-primary-100',
     },
+    {
+      icon: BookOpen,
+      title: '法规库联动',
+      description: '自动检索最新生效的法律法规和司法解释，每条合规建议都有明确法条依据，标注生效时间和适用范围',
+      color: 'text-emerald-600',
+      bgColor: 'bg-emerald-50',
+      borderColor: 'border-emerald-100',
+    },
   ];
 
   return (
@@ -210,7 +219,7 @@ export default function Home() {
                 <p className="text-sm text-primary-200 mt-1">风险规则</p>
               </div>
               <div className="text-center border-x border-white/20">
-                <p className="text-3xl font-serif font-bold text-accent-400">6大</p>
+                <p className="text-3xl font-serif font-bold text-accent-400">7大</p>
                 <p className="text-sm text-primary-200 mt-1">审查维度</p>
               </div>
               <div className="text-center">
@@ -409,7 +418,7 @@ export default function Home() {
         <div className="container">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-serif font-bold text-ink-900 mb-3">
-              六大核心能力
+              七大核心能力
             </h2>
             <p className="text-ink-500 max-w-xl mx-auto">
               全方位扫描合同风险，为您提供专业的审查建议
