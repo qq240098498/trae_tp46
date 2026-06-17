@@ -25,6 +25,8 @@ export const mockReviewResult: ReviewResult = {
           title: '服务范围约定不明',
           description: '合同中未明确约定具体的服务内容、交付物清单和验收标准，仅约定"另行协商确定"，可能导致双方对服务范围产生争议。',
           relatedText: '具体的开发内容、交付时间和验收标准由双方另行协商确定',
+          impactDescription: '服务范围未明确可能导致项目无法验收，双方对交付标准产生重大分歧，造成项目延期和经济损失。',
+          urgency: 'urgent',
         },
         {
           id: 'risk-1-2',
@@ -33,6 +35,8 @@ export const mockReviewResult: ReviewResult = {
           title: '"尽合理努力"表述模糊',
           description: '"尽合理努力"属于模糊表述，缺乏明确的衡量标准，难以界定乙方是否履行了合同义务。',
           relatedText: '乙方应尽合理努力完成相关工作',
+          impactDescription: '履约标准模糊可能导致乙方以"已尽合理努力"为由逃避责任，争议时难以举证违约。',
+          urgency: 'soon',
         },
       ],
       suggestions: [
@@ -71,6 +75,8 @@ export const mockReviewResult: ReviewResult = {
           title: '付款节奏对乙方不利',
           description: '50%预付款加尾款的付款方式，使得乙方需要垫付大量资金，且尾款支付条件与"项目完成"挂钩，但未明确"完成"的标准。',
           relatedText: '甲方应在合同签订后支付50%预付款，余款在项目完成后一次性支付',
+          impactDescription: '高比例预付款加尾款一次性支付，若项目未达标甲方难以追回已付款项，造成重大经济损失。',
+          urgency: 'urgent',
         },
         {
           id: 'risk-2-2',
@@ -79,6 +85,8 @@ export const mockReviewResult: ReviewResult = {
           title: '缺少逾期付款违约责任',
           description: '合同未约定甲方逾期付款的违约责任，乙方在甲方拖延付款时缺乏有效的救济手段。',
           relatedText: '',
+          impactDescription: '缺少逾期付款违约责任，甲方拖延付款时乙方缺乏有效救济，可能造成资金链断裂。',
+          urgency: 'soon',
         },
       ],
       suggestions: [
@@ -115,6 +123,8 @@ export const mockReviewResult: ReviewResult = {
           title: '知识产权归属过于绝对',
           description: '约定"所有知识产权归甲方所有"未区分乙方原有技术、通用组件和定制开发部分，可能损害乙方的合法权益。',
           relatedText: '乙方在履行本合同过程中产生的所有知识产权归甲方所有',
+          impactDescription: '知识产权全部归属甲方可能导致乙方原创技术和通用组件被无偿占有，存在重大经济利益损失风险。',
+          urgency: 'soon',
         },
         {
           id: 'risk-3-2',
@@ -123,6 +133,8 @@ export const mockReviewResult: ReviewResult = {
           title: '缺少第三方知识产权责任约定',
           description: '合同未约定如乙方交付内容侵犯第三方知识产权时的责任承担方式，甲方可能面临侵权风险。',
           relatedText: '',
+          impactDescription: '如交付内容侵犯第三方知识产权，甲方可能面临侵权诉讼和赔偿，法律风险较大。',
+          urgency: 'soon',
         },
         {
           id: 'risk-3-3',
@@ -131,6 +143,8 @@ export const mockReviewResult: ReviewResult = {
           title: '乙方署名权未作约定',
           description: '根据著作权法，作者享有署名权。合同未明确约定乙方是否享有署名权，可能引发争议。',
           relatedText: '乙方不得擅自使用或向任何第三方披露',
+          impactDescription: '署名权是作者的法定权利，未做约定虽可能引发争议，但通常不会造成重大经济影响。',
+          urgency: 'suggested',
         },
       ],
       suggestions: [
@@ -167,6 +181,8 @@ export const mockReviewResult: ReviewResult = {
           title: '保密期限过短',
           description: '仅约定保密期限为"合同有效期内"，商业秘密的价值通常不会因合同到期而消失，过短的保密期可能导致甲方商业秘密泄露。',
           relatedText: '保密期限为合同有效期内',
+          impactDescription: '合同到期后商业秘密将失去保护，可能被乙方自由使用或披露，造成不可逆的竞争优势损失。',
+          urgency: 'urgent',
         },
         {
           id: 'risk-4-2',
@@ -175,6 +191,8 @@ export const mockReviewResult: ReviewResult = {
           title: '保密范围不明确',
           description: '仅提及"商业秘密"，未明确保密信息的具体范围和界定标准，也未约定保密信息的除外情形。',
           relatedText: '乙方应对在合同履行过程中知悉的甲方商业秘密承担保密义务',
+          impactDescription: '保密范围不明确可能在执行中产生理解偏差，但整体保密意图明确。',
+          urgency: 'soon',
         },
         {
           id: 'risk-4-3',
@@ -183,6 +201,8 @@ export const mockReviewResult: ReviewResult = {
           title: '缺少违反保密义务的违约责任',
           description: '合同未约定违反保密义务的违约责任，难以有效约束乙方的保密行为。',
           relatedText: '',
+          impactDescription: '缺少违约责任约定降低保密条款约束力，但保密义务本身仍然有效。',
+          urgency: 'suggested',
         },
       ],
       suggestions: [
@@ -226,6 +246,8 @@ export const mockReviewResult: ReviewResult = {
           title: '违约责任约定过于笼统',
           description: '仅原则性约定"承担违约责任"，但未明确违约情形、违约金计算方式和损失赔偿范围，实际发生违约时难以执行。',
           relatedText: '任何一方违反本合同约定，应承担违约责任',
+          impactDescription: '违约责任不明确导致违约方难以被追责，守约方面临举证困难、维权成本高昂等问题。',
+          urgency: 'urgent',
         },
         {
           id: 'risk-5-2',
@@ -234,6 +256,8 @@ export const mockReviewResult: ReviewResult = {
           title: '缺少乙方逾期交付的违约责任',
           description: '软件开发项目中，逾期交付是常见风险，但合同未约定乙方逾期交付的违约责任。',
           relatedText: '',
+          impactDescription: '逾期交付是软件开发常见风险，缺少违约责任约定使甲方在项目延期时无法有效追偿。',
+          urgency: 'urgent',
         },
         {
           id: 'risk-5-3',
@@ -242,6 +266,8 @@ export const mockReviewResult: ReviewResult = {
           title: '双方违约责任不对等',
           description: '虽然表述上是"任何一方"，但由于未具体约定，实践中往往对提供服务的乙方约束更强，而甲方的违约责任难以追究。',
           relatedText: '任何一方违反本合同约定',
+          impactDescription: '违约责任表面对等但实际不对等，乙方更容易被追责而甲方违约成本较低。',
+          urgency: 'soon',
         },
       ],
       suggestions: [
@@ -278,6 +304,8 @@ export const mockReviewResult: ReviewResult = {
           title: '个人信息保护合规风险',
           description: '如处理个人信息，本合同未约定数据处理的目的、方式、范围，也未约定双方在个人信息保护方面的权利义务，不符合《个人信息保护法》的要求。',
           relatedText: '乙方应妥善保管甲方提供的数据资料',
+          impactDescription: '违反《个人信息保护法》可能面临行政处罚（最高5000万元或上一年度营业额5%罚款）、民事赔偿及刑事责任。',
+          urgency: 'urgent',
         },
         {
           id: 'risk-6-2',
@@ -286,6 +314,8 @@ export const mockReviewResult: ReviewResult = {
           title: '缺少数据安全保障措施约定',
           description: '合同未约定乙方应采取的数据安全保障措施，也未约定数据泄露时的应急处理和责任承担。',
           relatedText: '',
+          impactDescription: '缺少数据安全保障措施，发生数据泄露时责任不清，可能造成严重后果。',
+          urgency: 'soon',
         },
         {
           id: 'risk-6-3',
@@ -294,6 +324,8 @@ export const mockReviewResult: ReviewResult = {
           title: '缺少数据返还与删除条款',
           description: '合同未约定合同终止后乙方应如何处理甲方数据，包括返还、删除等要求。',
           relatedText: '',
+          impactDescription: '合同终止后数据处理未约定，可能导致数据残留风险，但可通过补充协议解决。',
+          urgency: 'suggested',
         },
       ],
       suggestions: [
@@ -335,6 +367,8 @@ export const mockReviewResult: ReviewResult = {
           title: '竞业限制约定可能无效',
           description: '竞业限制仅适用于特定劳动者，且需支付经济补偿。如乙方为企业，则该等竞业限制约定的法律效力存在较大不确定性。',
           relatedText: '不从事任何与甲方业务相竞争的活动',
+          impactDescription: '竞业限制约定不合法可能导致条款无效，无法实现保护商业利益的目的。',
+          urgency: 'urgent',
         },
         {
           id: 'risk-7-2',
@@ -343,6 +377,8 @@ export const mockReviewResult: ReviewResult = {
           title: '竞业范围不明确',
           description: '"相竞争的活动"表述过于宽泛，未明确竞争业务的具体范围、地域和期限，可能被认定为无效或约定不明。',
           relatedText: '不从事任何与甲方业务相竞争的活动',
+          impactDescription: '竞业范围过于宽泛可能被认定为无效，失去保护价值，存在争议空间。',
+          urgency: 'soon',
         },
         {
           id: 'risk-7-3',
@@ -351,6 +387,8 @@ export const mockReviewResult: ReviewResult = {
           title: '缺少竞业限制补偿约定',
           description: '如为劳动合同关系下的竞业限制，用人单位需支付经济补偿。本合同只约定了乙方的义务，未约定甲方的补偿义务，权利义务不对等。',
           relatedText: '',
+          impactDescription: '只约定竞业义务不支付补偿，权利义务不对等，可能被认定条款无效。',
+          urgency: 'soon',
         },
       ],
       suggestions: [
@@ -387,6 +425,8 @@ export const mockReviewResult: ReviewResult = {
           title: '管辖法院约定不明',
           description: '仅约定"提交法院诉讼解决"，未明确管辖法院。根据民事诉讼法，可能需要根据合同类型和履行地等确定管辖，增加争议解决的不确定性。',
           relatedText: '提交法院诉讼解决',
+          impactDescription: '管辖约定模糊可能导致争议解决时产生管辖权异议，增加诉讼时间和成本。',
+          urgency: 'soon',
         },
         {
           id: 'risk-8-2',
@@ -395,6 +435,8 @@ export const mockReviewResult: ReviewResult = {
           title: '未约定争议解决期间的合同履行',
           description: '未约定在争议解决期间，双方对无争议部分的合同义务应继续履行。',
           relatedText: '',
+          impactDescription: '未约定争议期间继续履行，但法律上有相关原则可参照，实质影响有限。',
+          urgency: 'suggested',
         },
       ],
       suggestions: [
@@ -431,6 +473,8 @@ export const mockReviewResult: ReviewResult = {
           title: '缺少合同解除条款',
           description: '合同仅约定了到期终止，未约定一方违约或其他情形下的合同解除权。',
           relatedText: '',
+          impactDescription: '缺少解除条款导致违约时难以终止合同，可能持续遭受损失。',
+          urgency: 'soon',
         },
         {
           id: 'risk-9-2',
@@ -439,6 +483,8 @@ export const mockReviewResult: ReviewResult = {
           title: '缺少合同终止后的善后条款',
           description: '未约定合同终止后的资料交接、工作交接、费用结算等善后事宜。',
           relatedText: '',
+          impactDescription: '合同终止后善后未约定可能导致交接不清，但可通过协商解决。',
+          urgency: 'suggested',
         },
       ],
       suggestions: [
@@ -474,6 +520,8 @@ export const mockReviewResult: ReviewResult = {
           title: '缺少通知与送达条款',
           description: '未约定双方的通知方式和送达地址，可能影响后续函件的法律效力。',
           relatedText: '',
+          impactDescription: '缺少通知送达条款可能影响函件法律效力，但实际操作中通常可补救。',
+          urgency: 'suggested',
         },
         {
           id: 'risk-10-2',
@@ -482,6 +530,8 @@ export const mockReviewResult: ReviewResult = {
           title: '缺少不可抗力条款',
           description: '未约定不可抗力的定义、通知义务和免责范围。',
           relatedText: '',
+          impactDescription: '缺少不可抗力条款在遭遇不可抗力时可能产生争议，但法律有一般原则可参照。',
+          urgency: 'suggested',
         },
       ],
       suggestions: [

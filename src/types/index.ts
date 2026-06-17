@@ -1,5 +1,6 @@
 export type RiskType = 'inequality' | 'ambiguity' | 'missing' | 'compliance';
 export type RiskSeverity = 'high' | 'medium' | 'low';
+export type UrgencyLevel = 'urgent' | 'soon' | 'suggested';
 export type SuggestionType = 'modification' | 'addition' | 'deletion';
 export type ContractCategory = 'sales' | 'service' | 'employment' | 'ndA' | 'lease' | 'other';
 export type RegulationType = 'law' | 'regulation' | 'judicial_interpretation' | 'administrative_regulation';
@@ -35,6 +36,8 @@ export interface RiskItem {
   title: string;
   description: string;
   relatedText: string;
+  impactDescription: string;
+  urgency: UrgencyLevel;
   regulationReferences?: RegulationReference[];
 }
 
@@ -134,4 +137,16 @@ export const CONTRACT_CATEGORIES: { value: ContractCategory; label: string }[] =
   { value: 'ndA', label: '保密协议' },
   { value: 'lease', label: '租赁合同' },
   { value: 'other', label: '其他合同' },
+];
+
+export const URGENCY_LEVEL_INFO: { level: UrgencyLevel; label: string; description: string }[] = [
+  { level: 'urgent', label: '紧急', description: '建议立即修改，否则可能导致重大损失或法律纠纷' },
+  { level: 'soon', label: '尽快', description: '建议尽快修改，存在争议空间但尚不致命' },
+  { level: 'suggested', label: '建议', description: '可视情况调整，措辞不严谨但实质影响有限' },
+];
+
+export const RISK_SEVERITY_INFO: { severity: RiskSeverity; label: string; description: string }[] = [
+  { severity: 'high', label: '高风险', description: '可能导致重大经济损失或法律纠纷，如无限连带责任、单方解约权不对等' },
+  { severity: 'medium', label: '中风险', description: '存在争议空间但不致命，如管辖约定模糊' },
+  { severity: 'low', label: '低风险', description: '措辞不严谨但实质影响有限' },
 ];

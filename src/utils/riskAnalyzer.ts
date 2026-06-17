@@ -1,4 +1,4 @@
-import type { ContractClause, RiskItem, SuggestionItem, TemplateDeviation, RiskType, RiskSeverity, SuggestionType } from '@/types';
+import type { ContractClause, RiskItem, SuggestionItem, TemplateDeviation, RiskType, RiskSeverity, SuggestionType, UrgencyLevel } from '@/types';
 import { findRegulationReferences } from '@/data/regulations';
 
 interface ParsedClause {
@@ -15,6 +15,8 @@ interface RiskPattern {
   title: string;
   description: (matchedText: string) => string;
   relatedText: (text: string, keyword: string) => string;
+  impactDescription: string;
+  urgency: UrgencyLevel;
 }
 
 interface SuggestionPattern {
@@ -182,6 +184,8 @@ const riskPatterns: RiskPattern[] = [
       const end = Math.min(text.length, idx + keyword.length + 15);
       return text.substring(start, end);
     },
+    impactDescription: '可能导致合同关键条款无法执行，若协商不成将引发重大履约纠纷甚至合同解除，造成重大经济损失。',
+    urgency: 'urgent',
   },
   {
     keywords: ['尽合理努力', '合理努力', '尽力', '尽可能'],
@@ -195,6 +199,8 @@ const riskPatterns: RiskPattern[] = [
       const end = Math.min(text.length, idx + keyword.length + 15);
       return text.substring(start, end);
     },
+    impactDescription: '履约标准模糊可能导致一方以"已尽合理努力"为由逃避责任，争议时难以举证违约，增加维权成本。',
+    urgency: 'soon',
   },
   {
     keywords: ['合理的', '适当的', '相关的', '相应的', '必要的'],
@@ -208,6 +214,8 @@ const riskPatterns: RiskPattern[] = [
       const end = Math.min(text.length, idx + keyword.length + 20);
       return text.substring(start, end);
     },
+    impactDescription: '模糊定性容易被对方做有利于己方的解释，在争议中处于被动地位，可能承担超出预期的义务。',
+    urgency: 'soon',
   },
   {
     keywords: ['乙方必须', '乙方应当', '乙方应', '乙方需'],
@@ -221,6 +229,8 @@ const riskPatterns: RiskPattern[] = [
       const end = Math.min(text.length, idx + keyword.length + 30);
       return text.substring(start, end);
     },
+    impactDescription: '权利义务严重失衡，可能导致一方承担无限连带责任，在法律上可能被认定为显失公平条款，面临被撤销风险。',
+    urgency: 'urgent',
   },
   {
     keywords: ['甲方有权', '甲方可以', '甲方可随时'],
@@ -234,6 +244,8 @@ const riskPatterns: RiskPattern[] = [
       const end = Math.min(text.length, idx + keyword.length + 30);
       return text.substring(start, end);
     },
+    impactDescription: '单方解约权不对等，一方可能随时解除合同而无需承担对等责任，导致对方遭受重大经济损失且无法追偿。',
+    urgency: 'urgent',
   },
   {
     keywords: ['不得', '禁止', '严禁'],
@@ -247,6 +259,8 @@ const riskPatterns: RiskPattern[] = [
       const end = Math.min(text.length, idx + keyword.length + 25);
       return text.substring(start, end);
     },
+    impactDescription: '单方限制性义务可能导致一方行为自由受到不当约束，若缺乏对等限制或补偿，存在争议空间。',
+    urgency: 'soon',
   },
   {
     keywords: ['所有知识产权', '全部知识产权', '一切知识产权', '所有权利'],
@@ -260,6 +274,8 @@ const riskPatterns: RiskPattern[] = [
       const end = Math.min(text.length, idx + keyword.length + 25);
       return text.substring(start, end);
     },
+    impactDescription: '知识产权全部归属一方可能导致另一方原创技术和智力成果被无偿占有，存在重大经济利益损失风险。',
+    urgency: 'soon',
   },
   {
     keywords: ['合同有效期内', '合同期内'],
@@ -273,6 +289,8 @@ const riskPatterns: RiskPattern[] = [
       const end = Math.min(text.length, idx + keyword.length + 15);
       return text.substring(start, end);
     },
+    impactDescription: '合同到期后商业秘密将失去保护，可能被对方自由使用或披露，造成不可逆的竞争优势损失和经济损害。',
+    urgency: 'urgent',
   },
   {
     keywords: ['承担违约责任', '承担相应责任'],
@@ -286,6 +304,8 @@ const riskPatterns: RiskPattern[] = [
       const end = Math.min(text.length, idx + keyword.length + 10);
       return text.substring(start, end);
     },
+    impactDescription: '违约责任不明确将导致违约方难以被追责，守约方可能面临举证困难、维权成本高昂等问题，直接影响合同约束力。',
+    urgency: 'urgent',
   },
   {
     keywords: ['提交法院', '向法院起诉', '诉讼解决'],
@@ -299,6 +319,8 @@ const riskPatterns: RiskPattern[] = [
       const end = Math.min(text.length, idx + keyword.length + 15);
       return text.substring(start, end);
     },
+    impactDescription: '管辖约定模糊可能导致争议解决时产生管辖权异议，增加诉讼时间和成本，且可能在不利地域进行诉讼。',
+    urgency: 'soon',
   },
   {
     keywords: ['个人信息', '个人数据', '隐私数据'],
@@ -312,6 +334,8 @@ const riskPatterns: RiskPattern[] = [
       const end = Math.min(text.length, idx + keyword.length + 15);
       return text.substring(start, end);
     },
+    impactDescription: '违反《个人信息保护法》可能面临行政处罚（最高5000万元或上一年度营业额5%罚款）、民事赔偿及刑事责任。',
+    urgency: 'soon',
   },
   {
     keywords: ['竞业限制', '竞业禁止', '不从事竞争', '相竞争的业务'],
@@ -325,6 +349,8 @@ const riskPatterns: RiskPattern[] = [
       const end = Math.min(text.length, idx + keyword.length + 20);
       return text.substring(start, end);
     },
+    impactDescription: '竞业限制约定不合法可能导致条款无效，无法实现保护商业利益的目的；若未支付经济补偿，还可能引发劳动争议和赔偿。',
+    urgency: 'urgent',
   },
   {
     keywords: ['50%', '百分之五十'],
@@ -338,6 +364,8 @@ const riskPatterns: RiskPattern[] = [
       const end = Math.min(text.length, idx + keyword.length + 20);
       return text.substring(start, end);
     },
+    impactDescription: '高比例预付款增加资金风险，若收款方违约或交付质量不达标，付款方难以追回已付款项，造成直接经济损失。',
+    urgency: 'soon',
   },
   {
     keywords: ['一次性支付', '全部付清', '一次性付清'],
@@ -351,6 +379,8 @@ const riskPatterns: RiskPattern[] = [
       const end = Math.min(text.length, idx + keyword.length + 15);
       return text.substring(start, end);
     },
+    impactDescription: '一次性付款后若对方违约或质量不达标，缺少付款杠杆，追偿难度大，可能造成经济损失。',
+    urgency: 'soon',
   },
   {
     keywords: ['自动终止', '自动解除'],
@@ -364,6 +394,8 @@ const riskPatterns: RiskPattern[] = [
       const end = Math.min(text.length, idx + keyword.length + 15);
       return text.substring(start, end);
     },
+    impactDescription: '合同终止后缺乏善后约定，可能导致资料交接不清、费用结算争议，保密义务中断等后续纠纷。',
+    urgency: 'soon',
   },
   {
     keywords: ['不得擅自使用', '不得向第三方披露'],
@@ -377,6 +409,8 @@ const riskPatterns: RiskPattern[] = [
       const end = Math.min(text.length, idx + keyword.length + 15);
       return text.substring(start, end);
     },
+    impactDescription: '保密范围不够细化，可能在执行中产生理解偏差，但整体保密意图明确，实质影响有限。',
+    urgency: 'suggested',
   },
   {
     keywords: ['妥善保管', '妥善处理'],
@@ -390,6 +424,8 @@ const riskPatterns: RiskPattern[] = [
       const end = Math.min(text.length, idx + keyword.length + 15);
       return text.substring(start, end);
     },
+    impactDescription: '"妥善"缺乏具体衡量标准，但在实务中通常可参照行业惯例理解，措辞不严谨但实质影响有限。',
+    urgency: 'suggested',
   },
   {
     keywords: ['任何一方', '双方均可', '双方均有权'],
@@ -403,6 +439,8 @@ const riskPatterns: RiskPattern[] = [
       const end = Math.min(text.length, idx + keyword.length + 20);
       return text.substring(start, end);
     },
+    impactDescription: '未区分违约情形虽不够精细，但已基本覆盖违约处理框架，措辞不严谨但实质影响有限。',
+    urgency: 'suggested',
   },
 ];
 
@@ -432,6 +470,8 @@ export function analyzeRisks(
           title: pattern.title,
           description: pattern.description(keyword),
           relatedText: pattern.relatedText(clauseContent, keyword),
+          impactDescription: pattern.impactDescription,
+          urgency: pattern.urgency,
           regulationReferences: regulationReferences.length > 0 ? regulationReferences : undefined,
         });
         break;
@@ -468,6 +508,8 @@ function adjustSeverityByCategory(
         title: '保密条款内容简略',
         description: '保密条款内容较为简略，建议明确保密信息范围、除外情形、保密期限和违约责任等。',
         relatedText: content.substring(0, Math.min(50, content.length)),
+        impactDescription: '保密条款过于简略可能导致保密范围不清、违约难以认定，商业秘密保护存在漏洞。',
+        urgency: 'soon',
         regulationReferences: regulationReferences.length > 0 ? regulationReferences : undefined,
       });
     }
@@ -803,6 +845,8 @@ export function addMissingClauseWarnings(
           title: info.title,
           description: info.content,
           relatedText: '',
+          impactDescription: `缺少${info.title}将导致合同在相关事项上缺乏明确约定，发生纠纷时难以依约处理。`,
+          urgency: 'soon',
           regulationReferences: regulationReferences.length > 0 ? regulationReferences : undefined,
         }],
         suggestions: [{

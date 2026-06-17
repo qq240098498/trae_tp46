@@ -15,10 +15,12 @@ import {
   TrendingUp,
   Clock,
   FileWarning,
+  Target,
 } from 'lucide-react';
 import { useContractStore } from '@/store/contractStore';
 import RiskBadge from '@/components/RiskBadge';
 import RiskTypeBadge from '@/components/RiskTypeBadge';
+import UrgencyBadge from '@/components/UrgencyBadge';
 import AnalysisProgress from '@/components/AnalysisProgress';
 import DisclaimerModal from '@/components/DisclaimerModal';
 import RegulationReference from '@/components/RegulationReference';
@@ -447,6 +449,19 @@ export default function Review() {
                               <p className="text-sm text-ink-700 leading-relaxed">
                                 {risk.description}
                               </p>
+                            </div>
+                            <div className="bg-ink-50/80 rounded-md p-3 border border-ink-200/60">
+                              <div className="flex items-center gap-1.5 mb-1.5">
+                                <Target className="w-3.5 h-3.5 text-ink-500" />
+                                <h5 className="text-xs font-medium text-ink-600">影响说明</h5>
+                              </div>
+                              <p className="text-sm text-ink-700 leading-relaxed">
+                                {risk.impactDescription}
+                              </p>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <span className="text-xs font-medium text-ink-500">修改紧迫度：</span>
+                              <UrgencyBadge urgency={risk.urgency} size="sm" />
                             </div>
                             {risk.relatedText && (
                               <div className="bg-risk-highLight/30 rounded-md p-3 border border-risk-high/10">
