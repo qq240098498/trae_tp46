@@ -406,7 +406,11 @@ const riskPatterns: RiskPattern[] = [
   },
 ];
 
-export function analyzeRisks(clauseContent: string): RiskItem[] {
+export function analyzeRisks(
+  clauseContent: string,
+  regulations?: Record<string, any>,
+  matchPatterns?: any[]
+): RiskItem[] {
   const risks: RiskItem[] = [];
   let riskIdCounter = 0;
   
@@ -419,7 +423,7 @@ export function analyzeRisks(clauseContent: string): RiskItem[] {
         if (addedRisks.has(riskKey)) continue;
         addedRisks.add(riskKey);
         
-        const regulationReferences = findRegulationReferences(clauseContent, pattern.type);
+        const regulationReferences = findRegulationReferences(clauseContent, pattern.type, regulations, matchPatterns);
         
         risks.push({
           id: `risk-${Date.now()}-${riskIdCounter++}`,
@@ -435,12 +439,17 @@ export function analyzeRisks(clauseContent: string): RiskItem[] {
     }
   }
   
-  adjustSeverityByCategory(risks, clauseContent);
+  adjustSeverityByCategory(risks, clauseContent, regulations, matchPatterns);
   
   return risks;
 }
 
-function adjustSeverityByCategory(risks: RiskItem[], content: string) {
+function adjustSeverityByCategory(
+  risks: RiskItem[],
+  content: string,
+  regulations?: Record<string, any>,
+  matchPatterns?: any[]
+) {
   if (content.includes('违约') && risks.length > 0) {
     const hasSpecific = content.includes('违约金') || content.includes('%') || content.includes('百分之');
     if (!hasSpecific) {
@@ -451,7 +460,7 @@ function adjustSeverityByCategory(risks: RiskItem[], content: string) {
   
   if (content.includes('保密') && risks.length === 0) {
     if (content.length < 80) {
-      const regulationReferences = findRegulationReferences(content, 'missing');
+      const regulationReferences = findRegulationReferences(content, 'missing', regulations, matchPatterns);
       risks.push({
         id: `risk-missing-${Date.now()}`,
         type: 'missing',
@@ -741,7 +750,12 @@ export function calculateOverallScore(clauses: ContractClause[]): {
   };
 }
 
-export function addMissingClauseWarnings(clauses: ContractClause[], parsedClauses: ParsedClause[]): ContractClause[] {
+export function addMissingClauseWarnings(
+  clauses: ContractClause[],
+  parsedClauses: ParsedClause[],
+  regulations?: Record<string, any>,
+  matchPatterns?: any[]
+): ContractClause[] {
   const missingCheck = checkMissingEssentialClauses(parsedClauses);
   const result = [...clauses];
   
@@ -774,7 +788,7 @@ export function addMissingClauseWarnings(clauses: ContractClause[], parsedClause
     if (!isFound && missingMap[category]) {
       const info = missingMap[category];
       const sampleContent = info.keywords.join(' ');
-      const regulationReferences = findRegulationReferences(sampleContent, 'missing');
+      const regulationReferences = findRegulationReferences(sampleContent, 'missing', regulations, matchPatterns);
       
       result.push({
         id: `clause-warning-${warningIndex}`,

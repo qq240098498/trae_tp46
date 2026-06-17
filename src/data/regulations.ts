@@ -398,12 +398,14 @@ export function getRelevanceLabel(relevance: string): string {
 
 export function findRegulationReferences(
   clauseContent: string,
-  riskType: string
+  riskType: string,
+  regulations: Record<string, RegulationItem> = REGULATIONS,
+  matchPatterns: RegulationMatchPattern[] = REGULATION_MATCH_PATTERNS
 ): RegulationReference[] {
   const references: RegulationReference[] = [];
   const addedRefs = new Set<string>();
 
-  for (const pattern of REGULATION_MATCH_PATTERNS) {
+  for (const pattern of matchPatterns) {
     if (!pattern.riskTypes.includes(riskType)) {
       continue;
     }
@@ -422,18 +424,19 @@ export function findRegulationReferences(
       }
       addedRefs.add(refKey);
 
-      const result = getRegulationReference(ref.regulationId, ref.articleNumber);
-      const regulation = result.regulation;
-      const articleContent = result.articleContent;
-
-      if (regulation && !regulation.isRepealed) {
-        references.push({
-          regulationId: ref.regulationId,
-          articleNumber: ref.articleNumber,
-          articleContent: articleContent,
-          relevance: ref.relevance,
-        });
+      const regulation = regulations[ref.regulationId];
+      if (!regulation || regulation.isRepealed) {
+        continue;
       }
+
+      const articleContent = regulation.articleIndex[ref.articleNumber] || '法条内容未收录';
+
+      references.push({
+        regulationId: ref.regulationId,
+        articleNumber: ref.articleNumber,
+        articleContent: articleContent,
+        relevance: ref.relevance,
+      });
     }
   }
 

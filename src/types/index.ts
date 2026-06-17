@@ -104,6 +104,29 @@ export const RISK_TYPE_INFO: RiskTypeInfo[] = [
   { type: 'compliance', label: '合规风险', description: '可能违反法律法规的强制性规定' },
 ];
 
+export interface RegulationMatchPattern {
+  keywords: string[];
+  riskTypes: string[];
+  regulationReferences: {
+    regulationId: string;
+    articleNumber: string;
+    relevance: RelevanceType;
+  }[];
+}
+
+export const REGULATION_TYPE_OPTIONS: { value: RegulationType; label: string }[] = [
+  { value: 'law', label: '法律' },
+  { value: 'regulation', label: '法规' },
+  { value: 'judicial_interpretation', label: '司法解释' },
+  { value: 'administrative_regulation', label: '行政法规' },
+];
+
+export const RELEVANCE_TYPE_OPTIONS: { value: RelevanceType; label: string }[] = [
+  { value: 'directly_applicable', label: '直接适用' },
+  { value: 'related', label: '相关参考' },
+  { value: 'reference', label: '参考适用' },
+];
+
 export const CONTRACT_CATEGORIES: { value: ContractCategory; label: string }[] = [
   { value: 'sales', label: '买卖合同' },
   { value: 'service', label: '服务合同' },

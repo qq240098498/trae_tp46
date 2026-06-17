@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import Home from "@/pages/Home";
 import Review from "@/pages/Review";
 import Templates from "@/pages/Templates";
+import Regulations from "@/pages/Regulations";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
@@ -28,6 +29,7 @@ function AppLayout() {
           <Route path="/" element={<Home />} />
           <Route path="/review" element={<Review />} />
           <Route path="/templates" element={<Templates />} />
+          <Route path="/regulations" element={<Regulations />} />
         </Routes>
       </main>
       {!isReviewPage && <Footer />}

@@ -8,7 +8,8 @@ export default function Header() {
 
   const navItems = [
     { path: '/', label: '首页', icon: Scale },
-    { path: '/templates', label: '模板库', icon: BookOpen },
+    { path: '/templates', label: '模板库', icon: FileText },
+    { path: '/regulations', label: '法规库', icon: BookOpen },
   ];
 
   const isActive = (path: string) => location.pathname === path;

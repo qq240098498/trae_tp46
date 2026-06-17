@@ -9,6 +9,7 @@ import {
   calculateOverallScore,
   addMissingClauseWarnings,
 } from '@/utils/riskAnalyzer';
+import { useRegulationStore } from './regulationStore';
 
 interface ContractState {
   reviewResult: ReviewResult | null;
@@ -56,10 +57,11 @@ export const useContractStore = create<ContractState>((set, get) => ({
     set({ isAnalyzing: true });
     
     setTimeout(() => {
+      const { regulations, matchPatterns } = useRegulationStore.getState();
       const parsedClauses = parseContractText(contractText);
       
       const contractClauses: ContractClause[] = parsedClauses.map((parsed, index) => {
-        const risks = analyzeRisks(parsed.content);
+        const risks = analyzeRisks(parsed.content, regulations, matchPatterns);
         const suggestions = generateSuggestions(parsed, risks);
         const templateDeviation = generateTemplateDeviation(parsed, risks);
         
@@ -75,7 +77,7 @@ export const useContractStore = create<ContractState>((set, get) => ({
         };
       });
       
-      const clausesWithWarnings = addMissingClauseWarnings(contractClauses, parsedClauses);
+      const clausesWithWarnings = addMissingClauseWarnings(contractClauses, parsedClauses, regulations, matchPatterns);
       const { score, summary } = calculateOverallScore(clausesWithWarnings);
       
       const firstLine = contractText.split('\n').find(line => line.trim().length > 0)?.trim() || '未命名合同';
