@@ -14,6 +14,7 @@ import {
   Lightbulb,
   Info,
   Check,
+  AlertCircle,
 } from 'lucide-react';
 import { useContractStore } from '@/store/contractStore';
 import { CONTRACT_CATEGORIES } from '@/types';
@@ -27,6 +28,7 @@ export default function Home() {
   const [contractType, setContractType] = useState('service');
   const [isDragging, setIsDragging] = useState(false);
   const [showDisclaimer, setShowDisclaimer] = useState(false);
+  const [showEmptyError, setShowEmptyError] = useState(false);
   const { isAnalyzing, startAnalysis, setContractText: setStoreContractText, setContractType: setStoreContractType } = useContractStore();
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
@@ -50,10 +52,12 @@ export default function Home() {
         reader.onload = (event) => {
           const text = event.target?.result as string;
           setContractText(text);
+          setShowEmptyError(false);
         };
         reader.readAsText(file);
       } else {
-        setContractText('（已上传文件：' + file.name + '\n\n' + sampleContractText);
+        setContractText('（已上传文件：' + file.name + '）\n\n' + sampleContractText);
+        setShowEmptyError(false);
       }
     }
   }, []);
@@ -63,14 +67,17 @@ export default function Home() {
     if (files && files.length > 0) {
       const file = files[0];
       setContractText('（已上传文件：' + file.name + '）\n\n' + sampleContractText);
+      setShowEmptyError(false);
     }
   };
 
   const handleStartReview = () => {
     if (!contractText.trim()) {
-      setContractText(sampleContractText);
+      setShowEmptyError(true);
+      return;
     }
-    setStoreContractText(contractText || sampleContractText);
+    setShowEmptyError(false);
+    setStoreContractText(contractText);
     setStoreContractType(contractType);
     startAnalysis();
     
@@ -81,6 +88,7 @@ export default function Home() {
 
   const handleTrySample = () => {
     setContractText(sampleContractText);
+    setShowEmptyError(false);
   };
 
   const features = [
@@ -269,7 +277,12 @@ export default function Home() {
                         </label>
                         <textarea
                           value={contractText}
-                          onChange={(e) => setContractText(e.target.value)}
+                          onChange={(e) => {
+                            setContractText(e.target.value);
+                            if (showEmptyError && e.target.value.trim()) {
+                              setShowEmptyError(false);
+                            }
+                          }}
                           placeholder="请在此粘贴合同文本内容..."
                           className="input-field h-48 resize-none"
                         />
@@ -312,13 +325,22 @@ export default function Home() {
                           </label>
                           <button
                             onClick={handleStartReview}
-                            className="btn-primary w-full py-3.5"
+                            disabled={!contractText.trim()}
+                            className={`w-full py-3.5 rounded-md font-medium transition-all duration-200 flex items-center justify-center gap-2 ${
+                              contractText.trim()
+                                ? 'btn-primary hover:shadow-card'
+                                : 'bg-ivory-200 text-ink-400 cursor-not-allowed'
+                            }`}
                           >
-                            <span className="flex items-center justify-center gap-2">
-                              <Sparkles className="w-5 h-5" />
-                              开始智能审查
-                            </span>
+                            <Sparkles className="w-5 h-5" />
+                            开始智能审查
                           </button>
+                          {showEmptyError && (
+                            <p className="mt-2 text-sm text-risk-high flex items-center gap-1.5 animate-fade-in">
+                              <AlertCircle className="w-4 h-4" />
+                              请先上传合同文件或粘贴合同文本
+                            </p>
+                          )}
                         </div>
                       </div>
                     </div>
