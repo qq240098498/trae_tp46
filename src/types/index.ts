@@ -5,6 +5,55 @@ export type SuggestionType = 'modification' | 'addition' | 'deletion';
 export type ContractCategory = 'sales' | 'service' | 'employment' | 'ndA' | 'lease' | 'other';
 export type RegulationType = 'law' | 'regulation' | 'judicial_interpretation' | 'administrative_regulation';
 export type RelevanceType = 'directly_applicable' | 'related' | 'reference';
+export type CaseType = 'first_instance' | 'second_instance' | 'retrial' | 'arbitration';
+export type VerdictType = 'plaintiff_win' | 'defendant_win' | 'partial_win' | 'settlement';
+export type MatchRelevance = 'high' | 'medium' | 'low';
+
+export interface HistoricalDisputeCase {
+  id: string;
+  caseNumber: string;
+  caseName: string;
+  caseType: CaseType;
+  court: string;
+  trialDate: string;
+  verdictType: VerdictType;
+  caseSummary: string;
+  disputeClauseContent: string;
+  disputedIssues: string[];
+  courtOpinion: string;
+  judgmentResult: string;
+  practicalGuidance: string;
+  clausePatterns: string[];
+  relatedCategories: string[];
+  riskTypes: RiskType[];
+}
+
+export interface HistoricalDisputeReference {
+  caseId: string;
+  relevance: MatchRelevance;
+  matchedKeywords: string[];
+  clauseReference: string;
+}
+
+export const CASE_TYPE_OPTIONS: { value: CaseType; label: string }[] = [
+  { value: 'first_instance', label: '一审' },
+  { value: 'second_instance', label: '二审' },
+  { value: 'retrial', label: '再审' },
+  { value: 'arbitration', label: '仲裁' },
+];
+
+export const VERDICT_TYPE_OPTIONS: { value: VerdictType; label: string }[] = [
+  { value: 'plaintiff_win', label: '原告胜诉' },
+  { value: 'defendant_win', label: '被告胜诉' },
+  { value: 'partial_win', label: '部分胜诉' },
+  { value: 'settlement', label: '调解结案' },
+];
+
+export const MATCH_RELEVANCE_OPTIONS: { value: MatchRelevance; label: string }[] = [
+  { value: 'high', label: '高度相关' },
+  { value: 'medium', label: '中度相关' },
+  { value: 'low', label: '参考案例' },
+];
 
 export interface RegulationItem {
   id: string;
@@ -39,6 +88,7 @@ export interface RiskItem {
   impactDescription: string;
   urgency: UrgencyLevel;
   regulationReferences?: RegulationReference[];
+  historicalDisputeReferences?: HistoricalDisputeReference[];
 }
 
 export interface SuggestionItem {

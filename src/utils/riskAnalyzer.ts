@@ -1,5 +1,6 @@
-import type { ContractClause, RiskItem, SuggestionItem, TemplateDeviation, RiskType, RiskSeverity, SuggestionType, UrgencyLevel } from '@/types';
+import type { ContractClause, RiskItem, SuggestionItem, TemplateDeviation, RiskType, RiskSeverity, SuggestionType, UrgencyLevel, HistoricalDisputeReference, MatchRelevance } from '@/types';
 import { findRegulationReferences } from '@/data/regulations';
+import { HISTORICAL_DISPUTE_CASES } from '@/data/historicalDisputes';
 
 interface ParsedClause {
   number: string;
@@ -481,6 +482,13 @@ export function analyzeRisks(
   
   adjustSeverityByCategory(risks, clauseContent, regulations, matchPatterns);
   
+  for (const risk of risks) {
+    const disputeReferences = findHistoricalDisputeReferences(clauseContent, risk);
+    if (disputeReferences.length > 0) {
+      risk.historicalDisputeReferences = disputeReferences;
+    }
+  }
+  
   return risks;
 }
 
@@ -861,4 +869,130 @@ export function addMissingClauseWarnings(
   }
   
   return result;
+}
+
+export function findHistoricalDisputeReferences(
+  clauseContent: string,
+  risk: RiskItem
+): HistoricalDisputeReference[] {
+  const references: HistoricalDisputeReference[] = [];
+  const addedCaseIds = new Set<string>();
+  
+  const riskRelatedKeywords = extractKeywordsFromRisk(risk);
+  
+  for (const disputeCase of HISTORICAL_DISPUTE_CASES) {
+    if (addedCaseIds.has(disputeCase.id)) continue;
+    
+    let keywordMatchCount = 0;
+    const matchedKeywords: string[] = [];
+    
+    for (const pattern of disputeCase.clausePatterns) {
+      if (clauseContent.includes(pattern)) {
+        keywordMatchCount++;
+        if (!matchedKeywords.includes(pattern)) {
+          matchedKeywords.push(pattern);
+        }
+      }
+    }
+    
+    for (const kw of riskRelatedKeywords) {
+      if (disputeCase.clausePatterns.some(p => 
+        p.includes(kw) || kw.includes(p.slice(0, Math.max(2, p.length - 2)))
+      )) {
+        keywordMatchCount++;
+        if (!matchedKeywords.includes(kw)) {
+          matchedKeywords.push(kw);
+        }
+      }
+    }
+    
+    const riskTypeMatch = disputeCase.riskTypes.includes(risk.type);
+    
+    let relevance: MatchRelevance = 'low';
+    if ((keywordMatchCount >= 3 && riskTypeMatch) || keywordMatchCount >= 4) {
+      relevance = 'high';
+    } else if ((keywordMatchCount >= 2 && riskTypeMatch) || keywordMatchCount >= 3) {
+      relevance = 'medium';
+    } else if ((keywordMatchCount >= 1 && riskTypeMatch) || keywordMatchCount >= 2) {
+      relevance = 'low';
+    } else {
+      continue;
+    }
+    
+    const clauseReference = extractClauseReference(clauseContent, matchedKeywords);
+    
+    references.push({
+      caseId: disputeCase.id,
+      relevance,
+      matchedKeywords: matchedKeywords.slice(0, 5),
+      clauseReference,
+    });
+    
+    addedCaseIds.add(disputeCase.id);
+  }
+  
+  references.sort((a, b) => {
+    const order = { high: 0, medium: 1, low: 2 };
+    return order[a.relevance] - order[b.relevance];
+  });
+  
+  return references.slice(0, 5);
+}
+
+function extractKeywordsFromRisk(risk: RiskItem): string[] {
+  const keywords: string[] = [];
+  
+  const titleContent = risk.title;
+  if (titleContent.includes('范围') || titleContent.includes('内容')) keywords.push('另行协商');
+  if (titleContent.includes('付款') || titleContent.includes('价款')) keywords.push('一次性支付');
+  if (titleContent.includes('知识产权')) keywords.push('所有知识产权');
+  if (titleContent.includes('保密')) keywords.push('保密期限');
+  if (titleContent.includes('违约')) keywords.push('承担违约责任');
+  if (titleContent.includes('管辖') || titleContent.includes('争议')) keywords.push('提交法院');
+  if (titleContent.includes('数据') || titleContent.includes('隐私')) keywords.push('妥善保管');
+  if (titleContent.includes('竞业')) keywords.push('竞业限制');
+  if (titleContent.includes('期限') || titleContent.includes('终止')) keywords.push('自动终止');
+  if (titleContent.includes('单方') || titleContent.includes('不对等')) keywords.push('乙方必须');
+  if (titleContent.includes('质量') || titleContent.includes('标准')) keywords.push('相关的');
+  
+  if (risk.relatedText) {
+    keywords.push(risk.relatedText.slice(0, 6));
+  }
+  
+  return keywords;
+}
+
+function extractClauseReference(content: string, matchedKeywords: string[]): string {
+  if (matchedKeywords.length === 0) return content.substring(0, 30);
+  
+  const firstKeyword = matchedKeywords[0];
+  const idx = content.indexOf(firstKeyword);
+  if (idx === -1) return content.substring(0, 30);
+  
+  const start = Math.max(0, idx - 10);
+  const end = Math.min(content.length, idx + firstKeyword.length + 15);
+  
+  let result = content.substring(start, end);
+  if (start > 0) result = '...' + result;
+  if (end < content.length) result = result + '...';
+  
+  return result;
+}
+
+export function addHistoricalDisputesToWarnings(
+  clauses: ContractClause[]
+): ContractClause[] {
+  return clauses.map(clause => ({
+    ...clause,
+    risks: clause.risks.map(risk => {
+      if (risk.historicalDisputeReferences && risk.historicalDisputeReferences.length > 0) {
+        return risk;
+      }
+      const disputeRefs = findHistoricalDisputeReferences(clause.content, risk);
+      if (disputeRefs.length > 0) {
+        return { ...risk, historicalDisputeReferences: disputeRefs };
+      }
+      return risk;
+    }),
+  }));
 }

@@ -24,6 +24,7 @@ import UrgencyBadge from '@/components/UrgencyBadge';
 import AnalysisProgress from '@/components/AnalysisProgress';
 import DisclaimerModal from '@/components/DisclaimerModal';
 import RegulationReference from '@/components/RegulationReference';
+import HistoricalDisputeReference from '@/components/HistoricalDisputeReference';
 import { useState } from 'react';
 
 export default function Review() {
@@ -473,6 +474,9 @@ export default function Review() {
                             )}
                             {risk.regulationReferences && risk.regulationReferences.length > 0 && (
                               <RegulationReference references={risk.regulationReferences} />
+                            )}
+                            {risk.historicalDisputeReferences && risk.historicalDisputeReferences.length > 0 && (
+                              <HistoricalDisputeReference references={risk.historicalDisputeReferences} />
                             )}
                           </div>
                         </div>

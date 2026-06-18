@@ -8,6 +8,7 @@ import {
   generateTemplateDeviation,
   calculateOverallScore,
   addMissingClauseWarnings,
+  addHistoricalDisputesToWarnings,
 } from '@/utils/riskAnalyzer';
 import { useRegulationStore } from './regulationStore';
 
@@ -78,7 +79,8 @@ export const useContractStore = create<ContractState>((set, get) => ({
       });
       
       const clausesWithWarnings = addMissingClauseWarnings(contractClauses, parsedClauses, regulations, matchPatterns);
-      const { score, summary } = calculateOverallScore(clausesWithWarnings);
+      const clausesWithDisputes = addHistoricalDisputesToWarnings(clausesWithWarnings);
+      const { score, summary } = calculateOverallScore(clausesWithDisputes);
       
       const firstLine = contractText.split('\n').find(line => line.trim().length > 0)?.trim() || '未命名合同';
       const contractTitle = firstLine.length > 30 ? firstLine.substring(0, 30) + '...' : firstLine;
@@ -92,7 +94,7 @@ export const useContractStore = create<ContractState>((set, get) => ({
         reviewDate: dateStr,
         overallScore: score,
         riskSummary: summary,
-        clauses: clausesWithWarnings,
+        clauses: clausesWithDisputes,
       };
       
       set({ 

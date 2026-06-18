@@ -27,6 +27,14 @@ export const mockReviewResult: ReviewResult = {
           relatedText: '具体的开发内容、交付时间和验收标准由双方另行协商确定',
           impactDescription: '服务范围未明确可能导致项目无法验收，双方对交付标准产生重大分歧，造成项目延期和经济损失。',
           urgency: 'urgent',
+          historicalDisputeReferences: [
+            {
+              caseId: 'case-001',
+              relevance: 'high',
+              matchedKeywords: ['另行协商', '协商确定'],
+              clauseReference: '...交付时间和验收标准由双方另行协商确定。乙方应尽合理努力...',
+            },
+          ],
         },
         {
           id: 'risk-1-2',
@@ -37,6 +45,14 @@ export const mockReviewResult: ReviewResult = {
           relatedText: '乙方应尽合理努力完成相关工作',
           impactDescription: '履约标准模糊可能导致乙方以"已尽合理努力"为由逃避责任，争议时难以举证违约。',
           urgency: 'soon',
+          historicalDisputeReferences: [
+            {
+              caseId: 'case-001',
+              relevance: 'medium',
+              matchedKeywords: ['尽合理努力'],
+              clauseReference: '...乙方应尽合理努力完成相关工作。',
+            },
+          ],
         },
       ],
       suggestions: [
@@ -77,6 +93,14 @@ export const mockReviewResult: ReviewResult = {
           relatedText: '甲方应在合同签订后支付50%预付款，余款在项目完成后一次性支付',
           impactDescription: '高比例预付款加尾款一次性支付，若项目未达标甲方难以追回已付款项，造成重大经济损失。',
           urgency: 'urgent',
+          historicalDisputeReferences: [
+            {
+              caseId: 'case-002',
+              relevance: 'high',
+              matchedKeywords: ['50%', '一次性支付', '预付款'],
+              clauseReference: '...支付50%预付款，余款在项目完成后一次性支付...',
+            },
+          ],
         },
         {
           id: 'risk-2-2',
@@ -125,6 +149,14 @@ export const mockReviewResult: ReviewResult = {
           relatedText: '乙方在履行本合同过程中产生的所有知识产权归甲方所有',
           impactDescription: '知识产权全部归属甲方可能导致乙方原创技术和通用组件被无偿占有，存在重大经济利益损失风险。',
           urgency: 'soon',
+          historicalDisputeReferences: [
+            {
+              caseId: 'case-003',
+              relevance: 'high',
+              matchedKeywords: ['所有知识产权'],
+              clauseReference: '...过程中产生的所有知识产权归甲方所有...',
+            },
+          ],
         },
         {
           id: 'risk-3-2',
@@ -183,6 +215,14 @@ export const mockReviewResult: ReviewResult = {
           relatedText: '保密期限为合同有效期内',
           impactDescription: '合同到期后商业秘密将失去保护，可能被乙方自由使用或披露，造成不可逆的竞争优势损失。',
           urgency: 'urgent',
+          historicalDisputeReferences: [
+            {
+              caseId: 'case-004',
+              relevance: 'high',
+              matchedKeywords: ['合同有效期内', '保密期限'],
+              clauseReference: '...保密期限为合同有效期内。',
+            },
+          ],
         },
         {
           id: 'risk-4-2',
@@ -193,6 +233,14 @@ export const mockReviewResult: ReviewResult = {
           relatedText: '乙方应对在合同履行过程中知悉的甲方商业秘密承担保密义务',
           impactDescription: '保密范围不明确可能在执行中产生理解偏差，但整体保密意图明确。',
           urgency: 'soon',
+          historicalDisputeReferences: [
+            {
+              caseId: 'case-012',
+              relevance: 'medium',
+              matchedKeywords: ['商业秘密', '不得擅自使用', '不得向第三方披露'],
+              clauseReference: '...知悉的甲方商业秘密承担保密义务。保密期限为合同...',
+            },
+          ],
         },
         {
           id: 'risk-4-3',
@@ -248,6 +296,14 @@ export const mockReviewResult: ReviewResult = {
           relatedText: '任何一方违反本合同约定，应承担违约责任',
           impactDescription: '违约责任不明确导致违约方难以被追责，守约方面临举证困难、维权成本高昂等问题。',
           urgency: 'urgent',
+          historicalDisputeReferences: [
+            {
+              caseId: 'case-005',
+              relevance: 'high',
+              matchedKeywords: ['承担违约责任', '任何一方违反'],
+              clauseReference: '...任何一方违反本合同约定，应承担违约责任。',
+            },
+          ],
         },
         {
           id: 'risk-5-2',
@@ -268,6 +324,14 @@ export const mockReviewResult: ReviewResult = {
           relatedText: '任何一方违反本合同约定',
           impactDescription: '违约责任表面对等但实际不对等，乙方更容易被追责而甲方违约成本较低。',
           urgency: 'soon',
+          historicalDisputeReferences: [
+            {
+              caseId: 'case-010',
+              relevance: 'medium',
+              matchedKeywords: ['任何一方', '甲方有权'],
+              clauseReference: '...任何一方违反本合同约定，应承担违约责任。',
+            },
+          ],
         },
       ],
       suggestions: [
@@ -306,6 +370,14 @@ export const mockReviewResult: ReviewResult = {
           relatedText: '乙方应妥善保管甲方提供的数据资料',
           impactDescription: '违反《个人信息保护法》可能面临行政处罚（最高5000万元或上一年度营业额5%罚款）、民事赔偿及刑事责任。',
           urgency: 'urgent',
+          historicalDisputeReferences: [
+            {
+              caseId: 'case-007',
+              relevance: 'high',
+              matchedKeywords: ['妥善保管', '数据资料', '个人信息'],
+              clauseReference: '...乙方应妥善保管甲方提供的数据资料，不得用于本合同以外的目的。',
+            },
+          ],
         },
         {
           id: 'risk-6-2',
@@ -369,6 +441,14 @@ export const mockReviewResult: ReviewResult = {
           relatedText: '不从事任何与甲方业务相竞争的活动',
           impactDescription: '竞业限制约定不合法可能导致条款无效，无法实现保护商业利益的目的。',
           urgency: 'urgent',
+          historicalDisputeReferences: [
+            {
+              caseId: 'case-008',
+              relevance: 'high',
+              matchedKeywords: ['竞业限制', '相竞争的活动'],
+              clauseReference: '...不从事任何与甲方业务相竞争的活动。',
+            },
+          ],
         },
         {
           id: 'risk-7-2',
@@ -379,6 +459,14 @@ export const mockReviewResult: ReviewResult = {
           relatedText: '不从事任何与甲方业务相竞争的活动',
           impactDescription: '竞业范围过于宽泛可能被认定为无效，失去保护价值，存在争议空间。',
           urgency: 'soon',
+          historicalDisputeReferences: [
+            {
+              caseId: 'case-008',
+              relevance: 'medium',
+              matchedKeywords: ['相竞争的活动', '竞业禁止'],
+              clauseReference: '...不从事任何与甲方业务相竞争的活动。',
+            },
+          ],
         },
         {
           id: 'risk-7-3',
@@ -427,6 +515,14 @@ export const mockReviewResult: ReviewResult = {
           relatedText: '提交法院诉讼解决',
           impactDescription: '管辖约定模糊可能导致争议解决时产生管辖权异议，增加诉讼时间和成本。',
           urgency: 'soon',
+          historicalDisputeReferences: [
+            {
+              caseId: 'case-006',
+              relevance: 'high',
+              matchedKeywords: ['提交法院', '诉讼解决'],
+              clauseReference: '...协商不成的，提交法院诉讼解决。',
+            },
+          ],
         },
         {
           id: 'risk-8-2',
@@ -475,6 +571,14 @@ export const mockReviewResult: ReviewResult = {
           relatedText: '',
           impactDescription: '缺少解除条款导致违约时难以终止合同，可能持续遭受损失。',
           urgency: 'soon',
+          historicalDisputeReferences: [
+            {
+              caseId: 'case-009',
+              relevance: 'medium',
+              matchedKeywords: ['自动终止', '合同期满'],
+              clauseReference: '...合同期满后自动终止。',
+            },
+          ],
         },
         {
           id: 'risk-9-2',
